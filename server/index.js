@@ -2,7 +2,7 @@
 const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const config = require('config');
+const config = require('../config');
 
 const app = express();
 
