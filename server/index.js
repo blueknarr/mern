@@ -1,40 +1,36 @@
-
-const express = require('express');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const express = require('express');
+const auth = require('./routes/auth');
+const home = require('./routes/home');
+const users = require('./routes/Users');
+const app = express('/auth/google',auth);
+const cookieSession = require('cookie-session');
+const mongoose = require('mongoose');
 const config = require('config');
 
-const app = express();
+//항상 코드를 사용하고 싶다
+require('./services/passport');
 
-passport.use(new GoogleStrategy(
-    {
-        clientID: config.auth.google.clientID,
-        clientSecret: config.auth.google.clientSecret,
-        callbackURL: "/auth/google/callback"
-    },
-    (accessToken, refreshToken, profile, done) => { 
-        console.log(`accessToken => ${accessToken} `);
-        console.log(`refreshToken => ${refreshToken} `);
-        console.log('profile =>', profile);
-        console.log(`done => ${done} `); 
-    }
-));
+mongoose.connect(config.DB.mongoURI,{ useNewUrlParser: true })
+.then(() => console.log('Connected to MongoDB'))
+.catch((error) => console.log(error.message));
 
-app.get('/', (req,res) => {
-    res.send({happy: 'hacking'});
-});
+app.use(
+    cookieSession({ //req.session 
+        name: 'MERN cookie',
+        //1 month
+        maxAge: (30 * 24 * 60 * 60 * 1000),
+        keys: [config.cookieKey]
+    })
+)
 
-//middleware 함수
-app.get(
-    '/auth/google', //user req toss
-    passport.authenticate('google',{ scope: ['profile', 'email']})
-);
+app.use(passport.initialize());
+app.use(passport.session()); //req.user == <USER INSTANCE>
 
-//데이터 넘겨줌
-app.get(
-    '/auth/google/callback', //req + code => google => Real user data
-    passport.authenticate('google') //can not get /auth/google/callback
-);
+//Routes
+app.use('/auth/google',auth);
+app.use(home);
+app.use('/users',users);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listen on ${PORT}`));
