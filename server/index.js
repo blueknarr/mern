@@ -30,7 +30,10 @@ app.use(passport.session()); //req.user == <USER INSTANCE>
 //Routes
 app.use('/auth/google',auth);
 app.use(home);
-app.use('/users',users);
+app.use('/api/users',users);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listen on ${PORT}`));
+
+
+

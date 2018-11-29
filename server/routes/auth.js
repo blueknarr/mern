@@ -9,8 +9,11 @@ router.get(
 
 //데이터 넘겨줌
 router.get(
-    '/callback', //req + code => google => Real user data
-    passport.authenticate('google') //can not get /auth/google/callback
+    '/callback', 
+    passport.authenticate('google'), //can not get /auth/google/callback
+    (req, res) => {
+        res.redirect('/dashboard');
+    }
 );
 
 module.exports = router;

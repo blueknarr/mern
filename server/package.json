@@ -12,7 +12,7 @@
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "kevin",
+  "author": "kevin Jeong",
   "license": "ISC",
   "dependencies": {
     "cookie-session": "^2.0.0-beta.3",
